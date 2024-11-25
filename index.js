@@ -6,13 +6,16 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // middleware
-app.use(cors());
+app.use(cors({
+    origin:'http://localhost:5173',
+    credentials: true
+}));
 app.use(express.json());
 
 
 console.log(process.env.DB_PASS)
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.swu9d.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.g8eto.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -28,7 +31,7 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
 
-        const serviceCollection = client.db('carDoctor').collection('services');
+        const serviceCollection = client.db('carDoctor').collection('Services');
         const bookingCollection = client.db('carDoctor').collection('bookings');
 
         app.get('/services', async (req, res) => {
@@ -49,7 +52,6 @@ async function run() {
             const result = await serviceCollection.findOne(query, options);
             res.send(result);
         })
-
 
         // bookings 
         app.get('/bookings', async (req, res) => {
